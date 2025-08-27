@@ -11,6 +11,7 @@ o.tabstop = 4
 o.shiftwidth = 4
 o.expandtab = true
 
+o.termguicolors = true
 o.wrap = false
 o.smoothscroll = true
 o.swapfile = false
@@ -23,7 +24,6 @@ o.incsearch = true
 o.scrolloff = 8
 
 o.colorcolumn = '100'
---or yes?
-o.signcolumn = 'number'
+o.signcolumn = 'yes'
 o.list = true
 vim.opt.listchars = { tab = '» ', trail = '·', nbsp = '␣' }

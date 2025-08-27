@@ -28,7 +28,6 @@ m.set('x', '<leader>p', [["_dP]])
 m.set({ 'n', 'v' }, '<leader>y', [["+y]])
 m.set('n', '<leader>Y', [["+Y]])
 
-m.set({ 'n', 'v' }, '<leader>d', '"_d')
 
 m.set('n', '<leader>s', [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><Left>]])
 

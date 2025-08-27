@@ -13,6 +13,10 @@ vim.pack.add({
     { src = GH .. 'ThePrimeagen/harpoon',       version = 'harpoon2' },
     { src = GH .. 'lukas-reineke/indent-blankline.nvim' },
     { src = GH .. 'nvim-treesitter/nvim-treesitter' },
+    { src = GH .. 'MunifTanjim/nui.nvim' },
+    { src = GH .. 'm4xshen/hardtime.nvim' },
+    { src = GH .. 'rcarriga/nvim-notify' },
+    { src = GH .. 'tris203/precognition.nvim' },
 })
 
 vim.cmd('colorscheme rose-pine-moon')
@@ -20,6 +24,15 @@ require 'lazydev'.setup()
 require 'mini.completion'.setup()
 require 'mini.icons'.setup()
 require 'mini.snippets'.setup()
+
+vim.notify = require 'notify'
+require 'hardtime'.setup({
+    enabled = false,
+    disabled_keys = {
+    ['<Up>'] = false,
+    ['<Down>'] = false,
+    ['<Left>'] = false,
+    ['<Right>'] = false }})
 
 require 'oil'.setup()
 vim.keymap.set('n', '<leader>pv', ':Oil<CR>')
@@ -29,8 +42,8 @@ vim.keymap.set('n', '<leader>pf', ':Pick files<CR>')
 vim.keymap.set('n', '<leader>ph', ':Pick help<CR>')
 
 require 'mini.diff'.setup()
-MiniDiff.config.view.style = 'sign'; vim.cmd('edit')
-vim.keymap.set('n', '<leader>do', function() MiniDiff.toggle_overlay(0) end)
+--MiniDiff.config.view.style = 'sign'; vim.cmd('edit')
+--vim.keymap.set('n', '<leader>do', function() MiniDiff.toggle_overlay(0) end)
 
 local harpoon = require 'harpoon'
 harpoon.setup()
@@ -66,3 +79,8 @@ hooks.register(hooks.type.HIGHLIGHT_SETUP, function()
 end)
 
 require("ibl").setup { indent = { highlight = highlight } }
+
+vim.keymap.set('n', '<leader>tw', function()
+    require 'precognition'.toggle()
+    vim.cmd(':Hardtime toggle')
+end)
