@@ -4,8 +4,6 @@ vim.pack.add({
     { src = GH .. 'neovim/nvim-lspconfig' },
     { src = GH .. 'mason-org/mason.nvim' },
     { src = GH .. 'mason-org/mason-lspconfig.nvim' },
-    { src = GH .. 'nvimtools/none-ls.nvim' },
-    { src = GH .. 'jay-babu/mason-nvim-dap.nvim' },
     { src = GH .. 'WhoIsSethDaniel/mason-tool-installer' },
 })
 
@@ -13,29 +11,13 @@ require 'mason'.setup()
 require 'mason-lspconfig'.setup()
 require 'mason-tool-installer'.setup({
     ensure_installed = {
+        'pyright',
         'lua-language-server',
         'vim-language-server',
         'stylua',
         'luacheck',
         'misspell',
-        'pyright',
-        'ruff',
         'jdtls'
-    }
-})
-local null_ls = require("null-ls")
-
---require 'mason-nvim-dap'.setup({
---    ensure_installed = {
---        'python',
---        'java'
-    --}
---})
-
-null_ls.setup({
-    sources = {
-        null_ls.builtins.formatting.stylua,
-        null_ls.builtins.completion.spell
     }
 })
 
@@ -53,7 +35,7 @@ vim.keymap.set('i', '<Tab>', '<C-n>')
 vim.keymap.set('i', '<S-Tab>', '<C-b>')
 
 vim.diagnostic.config({
-    --virtual_text = true,
-    virtual_lines = true,
+    virtual_text = true,
+    --virtual_lines = true,
     underline = true
 })

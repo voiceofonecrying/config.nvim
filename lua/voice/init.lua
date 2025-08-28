@@ -42,4 +42,4 @@ local function pack_clean()
     end
 end
 
-vim.keymap.set("n", "<leader>pc", pack_clean)
+vim.keymap.set("n", "<leader>pc", pack_clean, {desc='pack clean'})
