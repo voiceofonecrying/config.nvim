@@ -39,3 +39,5 @@ vim.diagnostic.config({
     --virtual_lines = true,
     underline = true
 })
+
+vim.lsp.on_type_formatting.enable()

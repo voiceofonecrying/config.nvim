@@ -20,6 +20,7 @@ vim.pack.add {
     { src = GH .. 'rcarriga/nvim-notify' },
     { src = GH .. 'tris203/precognition.nvim' },
     { src = GH .. 'pocco81/true-zen.nvim' },
+    { src = GH .. 'christoomey/vim-tmux-navigator' },
 }
 
 vim.cmd 'colorscheme rose-pine-moon'
