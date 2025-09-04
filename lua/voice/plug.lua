@@ -7,7 +7,7 @@ vim.pack.add {
     { src = GH .. 'echasnovski/mini.completion' },
     { src = GH .. 'echasnovski/mini.icons' },
     { src = GH .. 'echasnovski/mini.snippets' },
-    { src = GH .. 'echasnovski/mini.diff' },
+    { src = GH .. 'lewis6991/gitsigns.nvim' },
     { src = GH .. 'rose-pine/neovim' },
     { src = GH .. 'folke/lazydev.nvim' },
     { src = GH .. 'folke/which-key.nvim' },
@@ -19,8 +19,8 @@ vim.pack.add {
     { src = GH .. 'm4xshen/hardtime.nvim' },
     { src = GH .. 'rcarriga/nvim-notify' },
     { src = GH .. 'tris203/precognition.nvim' },
-    { src = GH .. 'pocco81/true-zen.nvim' },
     { src = GH .. 'christoomey/vim-tmux-navigator' },
+    { src = GH .. 'folke/zen-mode.nvim' },
 }
 
 vim.cmd 'colorscheme rose-pine-moon'
@@ -31,8 +31,9 @@ require('mini.snippets').setup()
 local which_key = require 'which-key'
 
 which_key.add {
-    { '<leader>p', desc='Pick' },
-    { '<leader>d', desc='DAP'},
+    { '<leader>p', desc = 'Pick' },
+    { '<leader>d', desc = 'DAP' },
+    { '<leader>g', desc = 'git' },
     --{ '<leader>a', icon = 'f1845' }
 }
 
@@ -47,6 +48,11 @@ require('hardtime').setup {
     },
 }
 
+require('zen-mode').setup({
+    tmux = { enabled = true }
+})
+
+keymap.set('n', '<leader>z', function () require('zen-mode').toggle({window={width=.65}}) end, {desc='zen mode'})
 require('oil').setup()
 keymap.set('n', '<leader>pv', ':Oil<CR>', { desc = 'explore' })
 local builtin = require 'telescope.builtin'
@@ -55,18 +61,15 @@ keymap.set('n', '<leader>pg', builtin.live_grep, { desc = 'grep' })
 keymap.set('n', '<leader>pb', builtin.buffers, { desc = 'buffers' })
 keymap.set('n', '<leader>ph', builtin.help_tags, { desc = 'help' })
 
-require('mini.diff').setup()
---MiniDiff.config.view.style = 'sign'; vim.cmd('edit')
---keymap.set('n', '<leader>do', function() MiniDiff.toggle_overlay(0) end)
 
 local harpoon = require 'harpoon'
 harpoon.setup()
 keymap.set('n', '<leader>h', function()
     harpoon.ui:toggle_quick_menu(harpoon:list())
-end, {desc='\'Pooned files'})
+end, { desc = '\'Pooned files' })
 keymap.set('n', '<leader>a', function()
     harpoon:list():add()
-end, {desc='\'Poon file'})
+end, { desc = '\'Poon file' })
 keymap.set('n', '<F1>', function()
     harpoon:list():select(1)
 end)
@@ -114,16 +117,13 @@ keymap.set('n', '<leader>tw', function()
     vim.cmd ':Hardtime toggle'
 end)
 
-local truezen = require('true-zen')
-keymap.set('n', '<leader>zn', function()
-  local first = 0
-  local last = vim.api.nvim_buf_line_count(0)
-  truezen.narrow(first, last)
-end, { noremap = true })
-keymap.set('v', '<leader>zn', function()
-  local first = vim.fn.line('v')
-  local last = vim.fn.line('.')
-  truezen.narrow(first, last)
-end, { noremap = true })
-keymap.set('n', '<leader>zm', truezen.minimalist, { noremap = true })
-keymap.set('n', '<leader>zz', truezen.ataraxis, { noremap = true })
+local gitsigns = require 'gitsigns'
+gitsigns.setup({
+    current_line_blame = true,
+    current_line_blame_opts = {
+        delay = 0,
+        virt_text_pos = 'right_align'
+
+    }
+})
+keymap.set('n', '<leader>gh', function () gitsigns.toggle_linehl() end, { desc = 'git highlight' })

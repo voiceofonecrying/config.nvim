@@ -29,10 +29,15 @@ vim.lsp.config('lua_ls', {
     }
 })
 
-vim.keymap.set('n', '<leader><Tab>', vim.lsp.buf.format)
+vim.keymap.set('n', '<leader><Tab>', vim.lsp.buf.format, { desc = 'LSP Format' })
 -- Tab cycles lsp completions
 vim.keymap.set('i', '<Tab>', '<C-n>')
 vim.keymap.set('i', '<S-Tab>', '<C-b>')
+vim.keymap.set('n', 'gd', function () vim.lsp.buf.definition() end, {desc='go to definition'})
+vim.keymap.set('n', 'gD', function () vim.lsp.buf.implementation() end, {desc='go to implementation'})
+vim.keymap.set('n', '<leader>rn', function () vim.lsp.buf.rename() end, {desc='rename variable'})
+
+
 
 vim.diagnostic.config({
     virtual_text = true,
@@ -40,4 +45,4 @@ vim.diagnostic.config({
     underline = true
 })
 
-vim.lsp.on_type_formatting.enable()
+--vim.lsp.on_type_formatting.enable()
