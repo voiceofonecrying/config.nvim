@@ -25,13 +25,13 @@ m.set('n', '=ap', "ma=ap'a")
 m.set('x', '<leader>p', [["_dP]])
 
 -- next greatest remap ever : asbjornHaland
-m.set({ 'n', 'v' }, '<leader>y', [["+y]])
-m.set('n', '<leader>Y', [["+Y]])
+m.set({ 'n', 'v' }, '<leader>y', [["+y]], {desc='yank to clipboard'})
+m.set('n', '<leader>Y', [["+Y]], {desc='yank line to clipboard'})
 
 
-m.set('n', '<leader>s', [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><Left>]])
+m.set('n', '<leader>s', [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><Left>]], {desc='rename word under cursor'})
 
 
 m.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
 m.set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' })
-m.set('n', '<leader>x', '<cmd>!chmod +x %<CR>', { silent = true })
+m.set('n', '<leader>x', '<cmd>!chmod +x %<CR>', { silent = true, desc='make bash executable' })

@@ -11,9 +11,11 @@ require 'mason'.setup()
 require 'mason-lspconfig'.setup()
 require 'mason-tool-installer'.setup({
     ensure_installed = {
-        'pyright',
+        'pyrefly',
+        'debugpy',
         'lua-language-server',
         'vim-language-server',
+        'groovy-language-server',
         'stylua',
         'luacheck',
         'misspell',
@@ -21,6 +23,7 @@ require 'mason-tool-installer'.setup({
     }
 })
 
+--vim.lsp.enable('zuban')
 vim.lsp.config('lua_ls', {
     settings = {
         workspace = {
@@ -41,8 +44,10 @@ vim.keymap.set('n', '<leader>rn', function () vim.lsp.buf.rename() end, {desc='r
 
 vim.diagnostic.config({
     virtual_text = true,
-    --virtual_lines = true,
+    virtual_lines = {
+        current_line = true
+    },
     underline = true
 })
 
---vim.lsp.on_type_formatting.enable()
+vim.lsp.on_type_formatting.enable()

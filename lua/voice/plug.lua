@@ -7,8 +7,10 @@ vim.pack.add {
     { src = GH .. 'echasnovski/mini.completion' },
     { src = GH .. 'echasnovski/mini.icons' },
     { src = GH .. 'echasnovski/mini.snippets' },
+    { src = GH .. 'echasnovski/mini.files' },
     { src = GH .. 'lewis6991/gitsigns.nvim' },
     { src = GH .. 'rose-pine/neovim' },
+    { src = GH .. 'doums/dark.nvim' },
     { src = GH .. 'folke/lazydev.nvim' },
     { src = GH .. 'folke/which-key.nvim' },
     { src = GH .. 'nvim-lua/plenary.nvim' },
@@ -21,19 +23,26 @@ vim.pack.add {
     { src = GH .. 'tris203/precognition.nvim' },
     { src = GH .. 'christoomey/vim-tmux-navigator' },
     { src = GH .. 'folke/zen-mode.nvim' },
+    { src = GH .. 'numToStr/Comment.nvim' },
 }
 
 vim.cmd 'colorscheme rose-pine-moon'
+require('Comment').setup()
 require('lazydev').setup()
 require('mini.completion').setup()
 require('mini.icons').setup()
 require('mini.snippets').setup()
+require('mini.files').setup()
 local which_key = require 'which-key'
 
 which_key.add {
-    { '<leader>p', desc = 'Pick' },
-    { '<leader>d', desc = 'DAP' },
+    { '<leader>p', desc = 'find' },
+    { '<leader>d', desc = 'debug' },
     { '<leader>g', desc = 'git' },
+    { '<leader>r', desc = 'refactor' },
+    { '<leader>tw', desc = 'training wheels' },
+    { '<leader>v', desc = 'venv select' },
+
     --{ '<leader>a', icon = 'f1845' }
 }
 
@@ -60,6 +69,7 @@ keymap.set('n', '<leader>pf', builtin.find_files, { desc = 'files' })
 keymap.set('n', '<leader>pg', builtin.live_grep, { desc = 'grep' })
 keymap.set('n', '<leader>pb', builtin.buffers, { desc = 'buffers' })
 keymap.set('n', '<leader>ph', builtin.help_tags, { desc = 'help' })
+keymap.set('n', '<leader>pp', function () require('mini.files').open() end, {desc='explorer'})
 
 
 local harpoon = require 'harpoon'

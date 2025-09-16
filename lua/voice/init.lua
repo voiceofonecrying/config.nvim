@@ -42,4 +42,18 @@ local function pack_clean()
     end
 end
 
+local function pack_update()
+    local active_plugins = {}
+
+    for _, plugin in ipairs(vim.pack.get()) do
+        table.insert(active_plugins, plugin.spec.name)
+    end
+
+    local choice = vim.fn.confirm("Update Plugins?", "&Yes\n&No", 2)
+    if choice == 1 then
+        vim.pack.update(active_plugins)
+    end
+end
+
 vim.keymap.set("n", "<leader>pc", pack_clean, {desc='pack clean'})
+vim.keymap.set("n", "<leader>pu", pack_update, {desc='pack update'})
