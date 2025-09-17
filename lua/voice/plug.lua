@@ -24,11 +24,13 @@ vim.pack.add {
     { src = GH .. 'christoomey/vim-tmux-navigator' },
     { src = GH .. 'folke/zen-mode.nvim' },
     { src = GH .. 'numToStr/Comment.nvim' },
+    { src = GH .. 'andrewferrier/wrapping.nvim' },
 }
 
 vim.cmd 'colorscheme rose-pine-moon'
 require('Comment').setup()
 require('lazydev').setup()
+require('wrapping').setup()
 require('mini.completion').setup()
 require('mini.icons').setup()
 require('mini.snippets').setup()
@@ -137,3 +139,4 @@ gitsigns.setup({
     }
 })
 keymap.set('n', '<leader>gh', function () gitsigns.toggle_linehl() end, { desc = 'git highlight' })
+keymap.set('n', '<leader>md', '<cmd>Markview HybridToggle<CR>', { desc = 'Toggle viewer' })

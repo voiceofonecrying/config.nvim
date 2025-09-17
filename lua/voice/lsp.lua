@@ -5,6 +5,10 @@ vim.pack.add({
     { src = GH .. 'mason-org/mason.nvim' },
     { src = GH .. 'mason-org/mason-lspconfig.nvim' },
     { src = GH .. 'WhoIsSethDaniel/mason-tool-installer' },
+    { src = GH .. 'lervag/vimtex' },
+    { src = GH .. 'hrsh7th/cmp-nvim-lsp' },
+    { src = GH .. 'hrsh7th/nvim-cmp' },
+    { src = GH .. 'L3MON4D3/LuaSnip' }
 })
 
 require 'mason'.setup()
@@ -19,17 +23,45 @@ require 'mason-tool-installer'.setup({
         'stylua',
         'luacheck',
         'misspell',
-        'jdtls'
+        'texlab'
     }
 })
 
 --vim.lsp.enable('zuban')
+vim.g.vimtex_view_method = 'zathura'
+vim.g.vimtex_compiler_method = 'tectonic'
+local cmp = require('cmp')
+
+cmp.setup({
+    snippet = {
+        expand = function (args)
+            require('luasnip').lsp_expand(args.body)
+        end
+    },
+    window = {
+        completion = cmp.config.window.bordered(),
+        documentation = cmp.config.window.bordered()
+    },
+    sources = {
+        { name = 'nvim_lsp' }
+    }
+})
+
+local capabilities = require('cmp_nvim_lsp').default_capabilities()
+
 vim.lsp.config('lua_ls', {
     settings = {
         workspace = {
             library = vim.api.nvim_get_runtime_file('', true)
         }
-    }
+    },
+    capabilities = capabilities
+})
+vim.lsp.config('texlab', {
+    capabilities = capabilities
+})
+vim.lsp.config('pyright', {
+    capabilities = capabilities
 })
 
 vim.keymap.set('n', '<leader><Tab>', vim.lsp.buf.format, { desc = 'LSP Format' })
