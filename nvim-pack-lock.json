@@ -1,0 +1,44 @@
+{
+  "plugins": {
+    "baleia.nvim": {
+      "rev": "710537ff5cd669c5a76c5f5b6a9169fd9b913d18",
+      "src": "https://github.com/m00qek/baleia.nvim"
+    },
+    "behave-lsp.nvim": {
+      "rev": "e6685df612c37f56f60fea86d012af410a93b2f9",
+      "src": "https://github.com/HosseyNJF/behave-lsp.nvim"
+    },
+    "cendre": {
+      "rev": "4d0758a3e6bf0d415c5e7b8cbaaf396754213a07",
+      "src": "https://github.com/Aejkatappaja/cendre"
+    },
+    "diffview.nvim": {
+      "rev": "4516612fe98ff56ae0415a259ff6361a89419b0a",
+      "src": "https://github.com/sindrets/diffview.nvim"
+    },
+    "lexima.vim": {
+      "rev": "9f6942c5e1f0f6fe63bdcdac515f34c484b970f5",
+      "src": "https://github.com/cohama/lexima.vim"
+    },
+    "neogit": {
+      "rev": "37e0f22a2345bad1bffe01b31970885882f46275",
+      "src": "https://github.com/NeogitOrg/neogit"
+    },
+    "nvim-lspconfig": {
+      "rev": "7de54fc6cae5080a656329a9c2f2dff03d914cdd",
+      "src": "git@github.com:neovim/nvim-lspconfig"
+    },
+    "plenary.nvim": {
+      "rev": "74b06c6c75e4eeb3108ec01852001636d85a932b",
+      "src": "https://github.com/nvim-lua/plenary.nvim"
+    },
+    "telescope-fzf-native.nvim": {
+      "rev": "b25b749b9db64d375d782094e2b9dce53ad53a40",
+      "src": "https://github.com/nvim-telescope/telescope-fzf-native.nvim"
+    },
+    "telescope.nvim": {
+      "rev": "427b576c16792edad01a92b89721d923c19ad60f",
+      "src": "https://github.com/nvim-telescope/telescope.nvim"
+    }
+  }
+}
