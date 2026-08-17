@@ -1,4 +1,4 @@
-vim.o.scrolloff = 5
+vim.o.scrolloff = 50
 vim.o.number = true
 vim.o.relativenumber = true
 vim.o.showmode = true
@@ -17,6 +17,20 @@ vim.o.undofile = true
 vim.o.autoread = true
 vim.o.laststatus = 3
 vim.o.cmdheight = 0
+vim.o.winblend = 5
+vim.o.splitright = true
 
-vim.g.mapleader = " "
 
+vim.cmd.colorscheme("jb")
+-- local modes = {
+-- 	'Normal', 'NormalNC', 'Comment', 'Constant', 'Special', 'Identifier',
+-- 	'Statement', 'PreProc', 'Type', 'Underlined', 'Todo', 'String', 'Function',
+-- 	'Conditional', 'Repeat', 'Operator', 'Structure', 'LineNr', 'NonText',
+-- 	'SignColumn', 'CursorLine', 'CursorLineNr', 'StatusLine', 'StatusLineNC',
+-- 	'EndOfBuffer', 'TelescopePreviewNormal', 'TelescopeMatching', 'TelescopeSelection',
+-- 	'TelescopePromptTitle', 'TelescopePromptPrefix', 'TelescopePromptCounter', 'TelescopePromptNormal',
+-- 	'TelescopePromptBorder', 'TelescopeResultsTitle', 'TelescopeResultsNormal', 'TelescopeResultsBorder',
+-- 	'TelescopePreviewTitle', 'TelescopePreviewNormal', 'TelescopePreviewBorder', }
+-- for _, mode in ipairs(modes) do
+-- 	vim.api.nvim_set_hl(0, mode, { bg = "none" })
+-- end

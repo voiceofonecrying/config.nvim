@@ -22,3 +22,4 @@ map('n', '<leader>zo', '<cmd>normal! zR<CR>', { silent = true })
 map('n', 'gd', vim.lsp.buf.declaration)
 map('n', '<leader>rn', vim.lsp.buf.rename)
 map('n', '<leader>rr', function() vim.lsp.buf.format({ async = true }) end)
+
