@@ -19,7 +19,7 @@ map('n', '<leader>zc', '<cmd>normal! zM<CR>', { silent = true })
 map('n', '<leader>zo', '<cmd>normal! zR<CR>', { silent = true })
 
 -- Common Neovim/LSP replacements for some IdeaVim actions
-map('n', 'gd', vim.lsp.buf.declaration)
+map('n', 'gD', vim.lsp.buf.declaration)
 map('n', '<leader>rn', vim.lsp.buf.rename)
 map('n', '<leader>rr', function() vim.lsp.buf.format({ async = true }) end)
 

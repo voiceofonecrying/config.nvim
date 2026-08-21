@@ -24,6 +24,10 @@
       "rev": "4d0758a3e6bf0d415c5e7b8cbaaf396754213a07",
       "src": "https://github.com/Aejkatappaja/cendre"
     },
+    "copilot.vim": {
+      "rev": "a12fd5672110c8aa7e3c8419e28c96943ca179be",
+      "src": "https://github.com/github/copilot.vim"
+    },
     "frizbee": {
       "rev": "5140b141d2d569b232ae4665408a3ba3db1f380b",
       "src": "https://github.com/saghen/frizbee"
@@ -31,6 +35,11 @@
     "gitsigns.nvim": {
       "rev": "5be654f2232c10ddcad19c1607a67b6b4b78fc29",
       "src": "https://github.com/lewis6991/gitsigns.nvim"
+    },
+    "harpoon": {
+      "rev": "87b1a3506211538f460786c23f98ec63ad9af4e5",
+      "src": "https://github.com/ThePrimeagen/harpoon",
+      "version": "'harpoon2'"
     },
     "jb.nvim": {
       "rev": "0234957d0b86e9cb70a70c69e9efbb5baaca1fb2",
@@ -67,10 +76,6 @@
     "slimline.nvim": {
       "rev": "6c91c731863f47636c6ae0f00774ea6c2c90cb4b",
       "src": "https://github.com/sschleemilch/slimline.nvim"
-    },
-    "telescope-file-browser.nvim": {
-      "rev": "3610dc7dc91f06aa98b11dca5cc30dfa98626b7e",
-      "src": "https://github.com/nvim-telescope/telescope-file-browser.nvim"
     },
     "telescope-fzf-native.nvim": {
       "rev": "b25b749b9db64d375d782094e2b9dce53ad53a40",

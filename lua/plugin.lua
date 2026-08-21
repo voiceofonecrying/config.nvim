@@ -9,7 +9,7 @@ vim.pack.add {
 	gh("nvim-lua/plenary.nvim"),
 	gh("nvim-telescope/telescope-fzf-native.nvim"),
 	gh("cohama/lexima.vim"),
-	{ src = gh("HosseyNJF/behave-lsp.nvim"),      build = "cd lsp_server && uv tool install . --force --reinstall" },
+	gh("HosseyNJF/behave-lsp.nvim"),
 	gh("lewis6991/gitsigns.nvim"),
 	gh("akinsho/toggleterm.nvim"),
 	gh("nickkadutskyi/jb.nvim"),
@@ -22,10 +22,107 @@ vim.pack.add {
 	gh("MunifTanjim/nui.nvim"),
 	gh("nvim-tree/nvim-web-devicons"),
 	gh("sschleemilch/slimline.nvim"),
-	{ src = gh("CopilotC-Nvim/CopilotChat.nvim"), build = "make tiktoken" }
+	gh("CopilotC-Nvim/CopilotChat.nvim"),
+	gh("github/copilot.vim"),
+	{ src = gh("ThePrimeagen/harpoon"), version = "harpoon2" }
 }
 
 
+local post_install_state_dir = vim.fs.joinpath(vim.fn.stdpath("state"), "pack-build")
+vim.fn.mkdir(post_install_state_dir, "p")
+
+local function pack_plugin_dir(name)
+	local matches = vim.fn.glob(vim.fn.stdpath("data") .. "/site/pack/*/*/" .. name, false, true)
+	return matches[1]
+end
+
+local function plugin_revision(dir)
+	local result = vim.system({ "git", "-C", dir, "rev-parse", "HEAD" }, { text = true }):wait()
+	if result.code == 0 then
+		return vim.trim(result.stdout)
+	end
+
+	return tostring(vim.fn.getftime(dir))
+end
+
+local function build_marker_path(key)
+	return vim.fs.joinpath(post_install_state_dir, key .. ".rev")
+end
+
+local function should_run_post_install(key, revision)
+	local marker = build_marker_path(key)
+	if vim.uv.fs_stat(marker) == nil then
+		return true
+	end
+
+	local recorded = table.concat(vim.fn.readfile(marker), "\n")
+	return recorded ~= revision
+end
+
+local function record_post_install(key, revision)
+	vim.fn.writefile({ revision }, build_marker_path(key))
+end
+
+local function run_post_install(name, opts)
+	local dir = pack_plugin_dir(name)
+	if not dir then
+		return
+	end
+
+	local cwd = opts.cwd and vim.fs.joinpath(dir, opts.cwd) or dir
+	if vim.uv.fs_stat(cwd) == nil then
+		vim.notify(("Post-install skipped for %s: missing directory %s"):format(name, cwd), vim.log.levels.WARN)
+		return
+	end
+
+	if vim.fn.executable(opts.cmd[1]) == 0 then
+		vim.notify(("Post-install skipped for %s: missing executable %s"):format(name, opts.cmd[1]), vim.log.levels.WARN)
+		return
+	end
+
+	local key = opts.key or name
+	local revision = plugin_revision(dir)
+	if not should_run_post_install(key, revision) then
+		return
+	end
+
+	vim.system(opts.cmd, { cwd = cwd, text = true }, function(result)
+		vim.schedule(function()
+			if result.code == 0 then
+				record_post_install(key, revision)
+				vim.notify(("Post-install complete for %s"):format(name))
+				return
+			end
+
+			vim.notify(
+				("Post-install failed for %s\n%s%s"):format(name, result.stdout or "", result.stderr or ""),
+				vim.log.levels.ERROR
+			)
+		end)
+	end)
+end
+
+local function run_plugin_post_installs()
+	run_post_install("behave-lsp.nvim", {
+		cwd = "lsp_server",
+		cmd = { "uv", "tool", "install", ".", "--force", "--reinstall" },
+	})
+
+	run_post_install("CopilotChat.nvim", {
+		cmd = { "make", "tiktoken" },
+	})
+end
+
+vim.api.nvim_create_autocmd("VimEnter", {
+	once = true,
+	callback = run_plugin_post_installs,
+})
+
+vim.api.nvim_create_user_command("PackBuildExtras", run_plugin_post_installs, {
+	desc = "Run plugin post-install steps",
+})
+
+-- Copilot Chat Integration
 require("CopilotChat").setup({
 	model = 'auto', -- AI model to use
 	temperature = 0.1, -- Lower = focused, higher = creative
@@ -53,13 +150,11 @@ vim.api.nvim_create_autocmd('BufEnter', {
 		vim.opt_local.conceallevel = 0
 	end,
 })
--- In your colorscheme or init.lua
 vim.api.nvim_set_hl(0, 'CopilotChatHeader', { fg = '#7C3AED', bg = 'none', bold = true })
 vim.api.nvim_set_hl(0, 'CopilotChatSeparator', { fg = '#374151', bg = 'none' })
 vim.keymap.set('n', "<leader>cc", "<cmd>CopilotChatToggle<cr>", { desc = "CopilotChat: toggle" })
 vim.keymap.set('n', "<leader>cp", "<cmd>CopilotChatPrompts<cr>", { desc = "CopilotChat: prompts" })
 vim.keymap.set('n', "<leader>cx", "<cmd>CopilotChatReset<cr>", { desc = "CopilotChat: reset" })
-
 vim.keymap.set('n', "<leader>ce", "<cmd>CopilotChatExplain<cr>", { desc = "CopilotChat: explain" })
 vim.keymap.set('n', "<leader>cr", "<cmd>CopilotChatReview<cr>", { desc = "CopilotChat: review" })
 vim.keymap.set('n', "<leader>cf", "<cmd>CopilotChatFix<cr>", { desc = "CopilotChat: fix" })
@@ -72,8 +167,6 @@ require("neo-tree").setup({})
 vim.keymap.set('n', '<leader>pv', '<cmd>Neotree toggle<cr>')
 require("venv-selector").setup()
 vim.keymap.set("n", "<leader>vs", "<cmd>VenvSelect<cr>")
-require("toggleterm").setup()
-vim.keymap.set('n', '<leader>t', '<cmd>ToggleTerm<cr>')
 require('Comment').setup({})
 
 require('telescope').setup({
@@ -90,6 +183,108 @@ vim.keymap.set('n', '<leader>fg', builtin.live_grep, { desc = 'Telescope live gr
 vim.keymap.set('n', '<leader>fb', builtin.buffers, { desc = 'Telescope buffers' })
 vim.keymap.set('n', '<leader>fh', builtin.help_tags, { desc = 'Telescope help tags' })
 
+require("toggleterm").setup()
+
+local Terminal = require("toggleterm.terminal").Terminal
+local lazygit = Terminal:new({
+	cmd = "lazygit",
+	hidden = true,
+	count = 2,
+	direction = "float",
+	float_opts = {
+		border = "double",
+	},
+})
+
+local function open_terminal(cmd)
+	local term = Terminal:new({
+		cmd = cmd,
+		hidden = true,
+		direction = "horizontal",
+		size = 12,
+		close_on_exit = false,
+	})
+	term:open()
+end
+
+local function current_pytest_target()
+	local file = vim.fn.expand("%:p")
+	local row = vim.api.nvim_win_get_cursor(0)[1]
+	local lines = vim.api.nvim_buf_get_lines(0, 0, row, false)
+
+	for i = #lines, 1, -1 do
+		local line = lines[i]
+		local func = line:match("^%s*def%s+(test[%w_]*)%s*%(")
+		if func then
+			local func_indent = #line:match("^(%s*)")
+			local class_name
+
+			for j = i - 1, 1, -1 do
+				local class_line = lines[j]
+				local class_name_match = class_line:match("^%s*class%s+(Test[%w_]*)%s*[%(:]")
+				if class_name_match and #class_line:match("^(%s*)") < func_indent then
+					class_name = class_name_match
+					break
+				end
+			end
+
+			if class_name then
+				return file .. "::" .. class_name .. "::" .. func
+			end
+
+			return file .. "::" .. func
+		end
+	end
+
+	return file
+end
+local function project_root_for_current_file()
+	local file_dir = vim.fn.expand("%:p:h")
+	return vim.fs.root(file_dir, { "pyproject.toml", ".git" }) or vim.fn.getcwd()
+end
+
+local function normalize_pytest_target(target, root)
+	local file_part, node_part = target:match("^(.-)(::.*)$")
+	if not file_part then
+		file_part = target
+		node_part = ""
+	end
+
+	local rel_file = vim.fs.relpath(root, file_part)
+	if rel_file and rel_file ~= "" then
+		file_part = rel_file
+	end
+
+	return file_part .. node_part
+end
+
+local function run_pytest_target(target)
+	local root = project_root_for_current_file()
+	local normalized_target = normalize_pytest_target(target, root)
+	local cmd = string.format(
+		[[bash -lc "cd %s && poetry run pytest --rootdir %s %s"]],
+		vim.fn.shellescape(root),
+		vim.fn.shellescape(root),
+		vim.fn.shellescape(normalized_target)
+	)
+	open_terminal(cmd)
+end
+
+local function run_current_file_pytest()
+	run_pytest_target(vim.fn.expand("%:p"))
+end
+
+local function run_current_test_pytest()
+	run_pytest_target(current_pytest_target())
+end
+
+vim.keymap.set("t", "<esc>", [[<C-\><C-n>]])
+vim.keymap.set("n", "<leader>tt", "<cmd>ToggleTerm<cr>")
+vim.keymap.set("n", "<leader>tg", function()
+	lazygit:toggle()
+end)
+vim.keymap.set("n", "<leader>tf", run_current_file_pytest, { desc = "Pytest: current file" })
+vim.keymap.set("n", "<leader>td", run_current_test_pytest, { desc = "Pytest: current test" })
 vim.api.nvim_create_autocmd("InsertEnter", {
 	pattern = "*",
 	once = true,
@@ -110,6 +305,22 @@ vim.api.nvim_create_autocmd("InsertEnter", {
 		})
 	end,
 })
+
+local harpoon = require("harpoon")
+harpoon.setup()
+
+vim.keymap.set("n", "<leader>a", function() harpoon:list():add() end)
+vim.keymap.set("n", "<leader>h", function() harpoon.ui:toggle_quick_menu(harpoon:list()) end)
+
+vim.keymap.set("n", "<F1>", function() harpoon:list():select(1) end)
+vim.keymap.set("n", "<F2>", function() harpoon:list():select(2) end)
+vim.keymap.set("n", "<F3>", function() harpoon:list():select(3) end)
+vim.keymap.set("n", "<F4>", function() harpoon:list():select(4) end)
+
+-- Toggle previous & next buffers stored within Harpoon list
+vim.keymap.set("n", "<F9>", function() harpoon:list():prev() end)
+vim.keymap.set("n", "<F10>", function() harpoon:list():next() end)
+
 
 local function pack_clean()
 	local active_plugins = {}
