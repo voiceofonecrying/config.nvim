@@ -24,103 +24,49 @@ vim.pack.add {
 	gh("sschleemilch/slimline.nvim"),
 	gh("CopilotC-Nvim/CopilotChat.nvim"),
 	gh("github/copilot.vim"),
-	{ src = gh("ThePrimeagen/harpoon"), version = "harpoon2" }
+	{ src = gh("ThePrimeagen/harpoon"), version = "harpoon2" },
+	gh('rcarriga/nvim-notify'),
+	gh('folke/noice.nvim'),
+	gh('nvim-neotest/nvim-nio'),
+	gh('antoinemadec/FixCursorHold.nvim'),
+	gh('nvim-neotest/neotest'),
+	gh('nvim-neotest/neotest-python'),
 }
 
-
-local post_install_state_dir = vim.fs.joinpath(vim.fn.stdpath("state"), "pack-build")
-vim.fn.mkdir(post_install_state_dir, "p")
-
-local function pack_plugin_dir(name)
-	local matches = vim.fn.glob(vim.fn.stdpath("data") .. "/site/pack/*/*/" .. name, false, true)
-	return matches[1]
-end
-
-local function plugin_revision(dir)
-	local result = vim.system({ "git", "-C", dir, "rev-parse", "HEAD" }, { text = true }):wait()
-	if result.code == 0 then
-		return vim.trim(result.stdout)
-	end
-
-	return tostring(vim.fn.getftime(dir))
-end
-
-local function build_marker_path(key)
-	return vim.fs.joinpath(post_install_state_dir, key .. ".rev")
-end
-
-local function should_run_post_install(key, revision)
-	local marker = build_marker_path(key)
-	if vim.uv.fs_stat(marker) == nil then
-		return true
-	end
-
-	local recorded = table.concat(vim.fn.readfile(marker), "\n")
-	return recorded ~= revision
-end
-
-local function record_post_install(key, revision)
-	vim.fn.writefile({ revision }, build_marker_path(key))
-end
-
-local function run_post_install(name, opts)
-	local dir = pack_plugin_dir(name)
-	if not dir then
-		return
-	end
-
-	local cwd = opts.cwd and vim.fs.joinpath(dir, opts.cwd) or dir
-	if vim.uv.fs_stat(cwd) == nil then
-		vim.notify(("Post-install skipped for %s: missing directory %s"):format(name, cwd), vim.log.levels.WARN)
-		return
-	end
-
-	if vim.fn.executable(opts.cmd[1]) == 0 then
-		vim.notify(("Post-install skipped for %s: missing executable %s"):format(name, opts.cmd[1]), vim.log.levels.WARN)
-		return
-	end
-
-	local key = opts.key or name
-	local revision = plugin_revision(dir)
-	if not should_run_post_install(key, revision) then
-		return
-	end
-
-	vim.system(opts.cmd, { cwd = cwd, text = true }, function(result)
-		vim.schedule(function()
-			if result.code == 0 then
-				record_post_install(key, revision)
-				vim.notify(("Post-install complete for %s"):format(name))
-				return
-			end
-
-			vim.notify(
-				("Post-install failed for %s\n%s%s"):format(name, result.stdout or "", result.stderr or ""),
-				vim.log.levels.ERROR
-			)
-		end)
-	end)
-end
-
-local function run_plugin_post_installs()
-	run_post_install("behave-lsp.nvim", {
-		cwd = "lsp_server",
-		cmd = { "uv", "tool", "install", ".", "--force", "--reinstall" },
-	})
-
-	run_post_install("CopilotChat.nvim", {
-		cmd = { "make", "tiktoken" },
-	})
-end
-
-vim.api.nvim_create_autocmd("VimEnter", {
-	once = true,
-	callback = run_plugin_post_installs,
+require("neotest").setup({
+	adapters = {
+		require("neotest-python")({
+			dap = { justMyCode = false },
+			python = ".venv/bin/python",
+		}),
+	},
 })
+vim.keymap.set("n", "<leader>tt", function()
+				vim.api.nvim_set_current_dir(vim.fs.dirname(vim.fn.expand("%:p")))
+				require("neotest").run.run()
+end, { desc = "Neotest: run test" })
+vim.keymap.set("n", "<leader>tf", function() require("neotest").run.run(vim.fn.expand("%")) end, { desc = "Neotest: run file" })
 
-vim.api.nvim_create_user_command("PackBuildExtras", run_plugin_post_installs, {
-	desc = "Run plugin post-install steps",
+
+require("noice").setup({
+	lsp = {
+		override = {
+			["vim.lsp.util.convert_input_to_markdown_lines"] = true,
+			["vim.lsp.util.stylize_markdown"] = true,
+			["cmp.entry.get_documentation"] = true,
+		},
+	},
+	presets = {
+		bottom_search = true,
+		command_palette = true,
+		long_message_to_split = true,
+	},
+	cmdline = {
+		view = "cmdline",
+	}
 })
+vim.keymap.set("n", "<leader>nn", "<cmd>NoiceHistory<cr>", { desc = "Noice: history" })
+
 
 -- Copilot Chat Integration
 require("CopilotChat").setup({
@@ -261,12 +207,7 @@ end
 local function run_pytest_target(target)
 	local root = project_root_for_current_file()
 	local normalized_target = normalize_pytest_target(target, root)
-	local cmd = string.format(
-		[[bash -lc "cd %s && poetry run pytest --rootdir %s %s"]],
-		vim.fn.shellescape(root),
-		vim.fn.shellescape(root),
-		vim.fn.shellescape(normalized_target)
-	)
+	local cmd = string.format("poetry run pytest %s", normalized_target)
 	open_terminal(cmd)
 end
 
@@ -279,12 +220,12 @@ local function run_current_test_pytest()
 end
 
 vim.keymap.set("t", "<esc>", [[<C-\><C-n>]])
-vim.keymap.set("n", "<leader>tt", "<cmd>ToggleTerm<cr>")
+vim.keymap.set("n", "<leader>tm", "<cmd>ToggleTerm<cr>")
 vim.keymap.set("n", "<leader>tg", function()
 	lazygit:toggle()
 end)
-vim.keymap.set("n", "<leader>tf", run_current_file_pytest, { desc = "Pytest: current file" })
-vim.keymap.set("n", "<leader>td", run_current_test_pytest, { desc = "Pytest: current test" })
+-- vim.keymap.set("n", "<leader>tf", run_current_file_pytest, { desc = "Pytest: current file" })
+-- vim.keymap.set("n", "<leader>td", run_current_test_pytest, { desc = "Pytest: current test" })
 vim.api.nvim_create_autocmd("InsertEnter", {
 	pattern = "*",
 	once = true,

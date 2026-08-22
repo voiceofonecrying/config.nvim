@@ -1,20 +1,19 @@
-vim.lsp.config('pytest_language_server', {
-  cmd = { 'pytest-language-server' },
-  filetypes = { 'python' },
-  root_markers = { 'pytest.ini', 'pyproject.toml', 'setup.py', 'setup.cfg', '.git' },
-})
+-- vim.lsp.config('pytest_language_server', {
+--   cmd = { 'pytest-language-server' },
+--   filetypes = { 'python' },
+--   root_markers = { 'pytest.ini', 'pyproject.toml', 'setup.py', 'setup.cfg', '.git' },
+-- })
 
-vim.lsp.config('pyright', {
-				settings = {
-								python = {
-												analysis = {
-																extraPaths = {
-																				{'/Users/jazkin/Dev/sas-studio-playwrightautomation/src/tests'} } } } }
-})
+-- vim.lsp.config('pyright', {
+-- 				settings = {
+-- 								python = {
+-- 												analysis = {
+-- 																extraPaths = {
+-- 																				{'/Users/jazkin/Dev/sas-studio-playwrightautomation/src/tests'} } } } }
+-- })
 
 vim.lsp.config('lua_ls', { settings = { Lua = { diagnostics = { globals = { "vim" } } } } })
-
-vim.lsp.enable({'lua_ls', 'ruff', 'pyrefly', 'pylsp', 'pyright', 'pytest_language_server', 'behave_lsp', 'gopls'})
+vim.lsp.enable({'lua_ls',  'pyright', 'behave_lsp', 'gopls'})
 -- lsp
 vim.diagnostic.config({ virtual_text = true })
 
