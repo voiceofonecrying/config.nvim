@@ -1,0 +1,15 @@
+local function req(mod) require("voice." .. mod) end
+req("etc")
+req("copilot")
+-- req("dap")
+req("harpoon")
+req("lsp")
+req("autocomplete")
+req("maps")
+-- req("neotest")
+req("noice")
+req("options")
+req("telescope")
+req("terminal")
+req("ui")
+
