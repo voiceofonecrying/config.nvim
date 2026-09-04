@@ -3,7 +3,7 @@ local gh = function(x) return 'https://github.com/' .. x end
 vim.pack.add {
 	gh('mfussenegger/nvim-dap'),
 	gh('mfussenegger/nvim-dap-python'),
-	gh('igorlfs/nvim-dap-view'),
+	gh('rcarriga/nvim-dap-ui'),
 	gh('theHamsta/nvim-dap-virtual-text'),
 }
 
@@ -13,16 +13,11 @@ local debug_env = {
 	PYDEVD_USE_FRAME_EVAL = "NO",
 	PYDEVD_DISABLE_FILE_VALIDATION = "1",
 }
-local python_path = '/Users/jazkin/Dev/viya-data-flows-python-test/.venv/bin/python'
 
-require('dap-view').virtual_text_enable()
-require('dap-view').setup({
-	winbar = {
-		default_section = "repl"
-	}
-})
 
-require('dap-python').setup(python_path)
+require('dapui').setup()
+require('dap-python').setup('~/.virtualenvs/debugpy/bin/python')
+
 dap.configurations.python = dap.configurations.python or {}
 table.insert(dap.configurations.python, {
 	type = 'python',
@@ -43,7 +38,7 @@ vim.fn.sign_define('DapBreakpointRejected', { text='', texthl='DapBreakpoint'
 vim.fn.sign_define('DapLogPoint', { text='', texthl='DapLogPoint', linehl='DapLogPoint', numhl= 'DapLogPoint' })
 vim.fn.sign_define('DapStopped', { text='', texthl='DapStopped', linehl='DapStopped', numhl= 'DapStopped' })
 
-vim.keymap.set("n", "<leader>du", "<cmd>DapViewToggle<cr>", { desc = "DAP: toggle UI" })
+vim.keymap.set("n", "<leader>du", function() require('dapui').toggle() end, { desc = "DAP: toggle UI" })
 
 vim.keymap.set("n", "<F10>", function()
 	dap.step_over()
