@@ -18,13 +18,15 @@ vim.pack.add {
 	gh('LintaoAmons/cd-project.nvim'),
 }
 
+vim.cmd.packadd('nvim.undotree')
+vim.keymap.set('n', '<leader>u', '<cmd>Undotree<cr>')
 require('lazydev').setup({ library = { 'nvim-dap-ui' } })
 vim.keymap.set("n", "<leader>ps", "<cmd>CdProject<cr>", { desc = "CD Project: change directory to project root" })
 require("neo-tree").setup({})
 vim.keymap.set('n', '<leader>pv', '<cmd>Neotree toggle<cr>')
 require("venv-selector").setup()
 vim.keymap.set("n", "<leader>vs", "<cmd>VenvSelect<cr>")
-require('Comment').setup({})
+require('Comment').setup()
 
 local function pack_clean()
 	local active_plugins = {}

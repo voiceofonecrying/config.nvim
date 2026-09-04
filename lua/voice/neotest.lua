@@ -17,7 +17,10 @@ neotest.setup({
 })
 
 vim.keymap.set("n", "<leader>tr", function() neotest.run.run() end, { desc = "Neotest: run test" })
-vim.keymap.set("n", "<leader>td", function() neotest.run.run({ strategy = "dap" }) end, { desc = "Neotest: debug test" })
+vim.keymap.set("n", "<leader>td", function()
+				require('dap-python').resolve_python()
+				neotest.run.run({ strategy = "dap" })
+end, { desc = "Neotest: debug test" })
 vim.keymap.set("n", "<leader>tf", function() neotest.run.run(vim.fn.expand("%")) end, { desc = "Neotest: run file" })
 vim.keymap.set("n", "<leader>tq", function() neotest.run.stop() end, { desc = "Neotest: stop" })
 vim.keymap.set("n", "<leader>to", function() neotest.output_panel.toggle() end, { desc = "Neotest: output" })
