@@ -16,8 +16,15 @@ vim.pack.add {
 	gh("nvim-neo-tree/neo-tree.nvim"),
 	gh('nvim-neotest/nvim-nio'),
 	gh('LintaoAmons/cd-project.nvim'),
+	gh('soulis-1256/eagle.nvim'),
+	gh('error311/wayfinder.nvim')
 }
 
+require('wayfinder').setup()
+vim.keymap.set('n', '<leader>wf', '<cmd>Wayfinder<cr>')
+require('eagle').setup({
+				keyboard_mode = true
+})
 vim.cmd.packadd('nvim.undotree')
 vim.keymap.set('n', '<leader>u', '<cmd>Undotree<cr>')
 require('lazydev').setup({ library = { 'nvim-dap-ui' } })

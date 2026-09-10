@@ -22,5 +22,6 @@ vim.o.splitright = true
 vim.opt.backup = false
 vim.opt.writebackup = false
 vim.opt.updatetime = 300
+vim.o.mousemoveevent = true
 
 
